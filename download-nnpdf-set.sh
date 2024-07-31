@@ -8,7 +8,7 @@ if [[ ${#} != 2 ]]; then
 fi
 
 if [[ ! -d ${2} ]]; then
-    echo "${2} is not a directory"
+    echo >&2 "error: ${2} is not a directory"
     exit 1
 fi
 
