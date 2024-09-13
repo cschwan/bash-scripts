@@ -2,25 +2,28 @@
 
 set -euo pipefail
 
-if [[ ${#} != 3 ]]; then
-    echo "usage: ${0} <GRID> <PDFSET> <OUTPUT>"
+if [[ ${#} != 4 ]]; then
+    echo "usage: ${0} <GRID> <PDFSET> <OUTPUT> <P>"
     exit 1
 fi
 
 grid=${1}
 pdfset=${2}
 output=${3}
+p=${4}
 
 # read in bins limits - we assume they are one-dimensional!
 pineappl read --bins "${grid}" | tail -n +3 > bins
 
 values=$(python3 - <<EOF
 import lhapdf
+import numpy as np
 import pandas as pd
 
 df = pd.read_csv('bins', header = None, sep = '\s+')
 # harmonic mean
-points = 2.0 / df[[1, 2]].apply(lambda x: 1.0 / x).sum(axis=1)
+p = ${p}.0
+points = np.pow(df[[1, 2]].apply(lambda x: pow(x, p)).sum(axis=1) / 2, 1 / p)
 
 lhapdf.setVerbosity(0)
 
